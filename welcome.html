@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LadySwap - Welcome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="favicons/favicon-32x32.png" sizes="32x32">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+</head>
+<body class="page-enter">
+  <div class="main-bg"><img src="images/bg-bottom.webp" alt="Background"></div>
+  <div class="main-bg-overlay"></div>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="nav-brand" href="index.html" style="padding:0;">
+      <div class="nav-logo" style="padding:0;">
+          <img src="images/lips-logo.png" alt="Lady Swap Logo" class="logo-img" style="height:38px;max-width:140px;border-radius:11px;">
+      </div>
+    </a>
+    <div class="nav-right">
+      <div class="nav-status" id="navStatus">
+        <span class="status-dot inactive" id="statusDot"></span>
+        <span id="statusText">Not subscribed</span>
+      </div>
+      <button class="nav-icon-btn" id="openChatBtn" type="button" aria-label="Chat with admin">
+        <i data-lucide="message-circle"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="welcome-page">
+
+    <!-- Hero -->
+    <section class="welcome-hero">
+      <div class="owner-banner" aria-label="Site owner banner">
+        <img src="images/banner.jpeg" alt="Site owner" />
+      </div>
+      <!-- <div class="hero-badge">Verified Premium Booking</div> -->
+      <h1 class="hero-title">
+        Hello,<br>
+        <span class="gradient-text typing-text" id="typingText" data-text="Pay $2000 to subscribe and get Ruby's booking code information."></span>
+      </h1>
+      <p class="hero-subtitle">
+        This helps us protect and verify clients before sharing more information about Ruby,
+        including her real home address on her ID card and private booking details verified by our team.
+      </p>
+      <p class="hero-subtitle hero-subtitle-secondary">
+        Once booking code verification is completed, the full refund will be returned through
+        your preferred method. This helps us protect everyone on our website.
+      </p>
+      <p class="hero-note">
+        You are seeing this message because Ruby is a verified premium member of our site.
+        For help, use the chat icon in the top navigation.
+      </p>
+    </section>
+
+    <!-- Action cards -->
+    <div class="welcome-cards">
+
+      <!-- Subscribe card -->
+      <div class="card subscribe-card" id="subscribeCard">
+        <div class="card-header">
+          <div class="card-icon purple"><i data-lucide="badge-dollar-sign"></i></div>
+          <div>
+            <h3 class="card-title">Proceed to Obtain Code</h3>
+            <p class="card-description">Subscribe and receive your booking code</p>
+          </div>
+        </div>
+
+        <form id="subscribeForm">
+          <p class="chat-card-text">Start a chat with admin to request the subscription instructions and booking code process.</p>
+          <div id="subscribeAlert" class="hidden"></div>
+          <button class="btn btn-primary btn-block btn-lg" type="button" id="subscribeBtn">
+            <i data-lucide="message-circle"></i>
+            <span id="subscribeBtnText">Proceed to Obtain Code</span>
+            <span class="spinner hidden" id="subscribeSpinner"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Verify code card -->
+      <div class="card" id="verifyCard">
+        <div class="card-header">
+          <div class="card-icon blue"><i data-lucide="key-round"></i></div>
+          <div>
+            <h3 class="card-title">Enter Code</h3>
+            <p class="card-description">Already premium? Verify your code</p>
+          </div>
+        </div>
+
+        <div id="verifySuccess" class="hidden">
+          <div class="success-banner compact">
+            <div class="success-icon"><i data-lucide="circle-check-big"></i></div>
+            <h3 id="verifyWelcomeText">Welcome back!</h3>
+            <p>Redirecting you in <span id="verifyCountdown">3</span>s...</p>
+          </div>
+        </div>
+
+        <form id="verifyForm">
+          <div class="form-group">
+            <label class="form-label">Subscriber Code</label>
+            <input class="form-input code-input" type="text" id="verifyCode"
+              placeholder="LS-XXXXXXXXX" maxlength="12"
+              autocomplete="off" spellcheck="false" />
+          </div>
+          <div id="verifyAlert" class="hidden"></div>
+          <button class="btn btn-secondary btn-block" type="submit" id="verifyBtn">
+            <span id="verifyBtnText">Verify Code</span>
+            <span class="spinner hidden" id="verifySpinner"></span>
+          </button>
+        </form>
+
+        <div class="divider-line"></div>
+        <p class="card-hint">Lost your code? <a class="text-link" href="#subscribeCard">Subscribe again</a> using the same email to recover it.</p>
+      </div>
+
+    </div><!-- /welcome-cards -->
+  </main>
+
+  <!-- ===================== CHAT MODAL ===================== -->
+  <div class="modal-overlay" id="chatModal" role="dialog" aria-modal="true" aria-label="Chat with Admin">
+    <div class="chat-window">
+
+      <div class="chat-header">
+        <div class="chat-avatar"><i data-lucide="message-circle"></i></div>
+        <div class="chat-header-info">
+          <h3>Support Chat</h3>
+          <span class="chat-online"><span class="status-dot"></span> Online</span>
+        </div>
+        <button class="chat-close" id="closeChatBtn" aria-label="Close chat"><i data-lucide="x"></i></button>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <!-- Auto-populated by JS -->
+        <div class="message admin">
+          <div class="message-bubble">Hello! How can I help you today?</div>
+          <div class="message-time">Just now</div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <input class="chat-file-input" id="chatFileInput" type="file" accept="image/*" />
+        <button class="chat-attach-btn" id="chatAttachBtn" type="button" aria-label="Send photo"><i data-lucide="image-plus"></i></button>
+        <textarea class="chat-input" id="chatInput" placeholder="Type a message..." rows="1" maxlength="1000"></textarea>
+        <button class="chat-send-btn" id="chatSendBtn" aria-label="Send message"><i data-lucide="send"></i></button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/welcome.js"></script>
+</body>
+</html>
+

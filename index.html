@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LadySwap - Loading</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="favicons/favicon-32x32.png" sizes="32x32">
+</head>
+<body>
+  <div class="main-bg"><img src="images/bg-bottom.webp" alt="Background"></div>
+  <div class="main-bg-overlay"></div>
+  <!-- Particle canvas -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Loading screen -->
+  <div id="loadingScreen">
+    <div class="loader-container">
+
+      <div class="logo-wrapper">
+        <h1 class="logo-text-loading" id="logoText">Lady's One Booking Support</h1>
+        <p class="logo-subtitle">Please wait while we prepare your access</p>
+      </div>
+
+      <div class="loading-progress-container">
+        <div class="loading-progress-bar" id="progressBar"></div>
+      </div>
+
+      <p class="loading-status" id="loadingStatus">Starting booking support...</p>
+
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/loading.js"></script>
+</body>
+</html>

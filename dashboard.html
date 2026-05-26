@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LadySwap — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="favicons/favicon-32x32.png" sizes="32x32">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+</head>
+
+<body class="page-enter">
+  <div class="main-bg"><img src="images/bg-bottom.webp" alt="Background"></div>
+  <div class="main-bg-overlay"></div>
+  <!-- Top Banner -->
+  <div class="top-banner">
+    <img src="images/bg-bottom.webp" alt="Top Banner" class="top-banner-img">
+  </div>
+
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="nav-brand" href="index.html">
+      <div class="nav-logo"><img src="images/lips-logo.png" alt="Lady Swap Logo" class="logo-img" style="width:38px;height:38px;border-radius:11px;"></div>
+      <span class="nav-brand-text">LadySwap</span>
+    </a>
+    <div class="nav-right">
+      <div class="subscriber-pill" id="subscriberPill">
+        <span class="status-dot"></span>
+        <span id="subscriberName">Loading…</span>
+        <span class="subscriber-code-badge" id="subscriberCodeBadge"></span>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="logoutBtn">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Dashboard content -->
+  <main class="dashboard-page page-enter">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+      <div>
+        <h1 class="dashboard-title">Welcome back, <span class="gradient-text" id="greetingName">Member</span></h1>
+        <p class="dashboard-subtitle">You have full access to LadySwap platform.</p>
+      </div>
+      <div class="subscription-status-card">
+        <div class="status-icon"><i data-lucide="circle-check-big"></i></div>
+        <div>
+          <p class="status-label">Subscription Status</p>
+          <p class="status-value text-success">Active</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="card stat-mini">
+        <div class="stat-mini-icon purple"><i data-lucide="ticket"></i></div>
+        <div>
+          <p class="stat-mini-label">Your Code</p>
+          <p class="stat-mini-value code-mono" id="dashCode">—</p>
+        </div>
+      </div>
+      <div class="card stat-mini">
+        <div class="stat-mini-icon blue"><i data-lucide="calendar-days"></i></div>
+        <div>
+          <p class="stat-mini-label">Member Since</p>
+          <p class="stat-mini-value" id="memberSince">—</p>
+        </div>
+      </div>
+      <div class="card stat-mini">
+        <div class="stat-mini-icon cyan"><i data-lucide="shield-check"></i></div>
+        <div>
+          <p class="stat-mini-label">Access Level</p>
+          <p class="stat-mini-value text-success">Premium</p>
+        </div>
+      </div>
+      <div class="card stat-mini">
+        <div class="stat-mini-icon green"><i data-lucide="hourglass"></i></div>
+        <div>
+          <p class="stat-mini-label">Expires</p>
+          <p class="stat-mini-value" id="expiresAt">Never</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content grid -->
+    <div class="content-grid">
+
+      <!-- Protected content -->
+      <div class="card content-card">
+        <div class="card-header">
+          <div class="card-icon purple"><i data-lucide="sparkles"></i></div>
+          <div>
+            <h3 class="card-title">Exclusive Content</h3>
+            <p class="card-description">Available to subscribers only</p>
+          </div>
+        </div>
+        <div class="content-items">
+          <div class="content-item">
+            <div class="content-item-icon"><i data-lucide="package"></i></div>
+            <div>
+              <h4>Premium Resources</h4>
+              <p>Access curated tools and resources available only to members.</p>
+            </div>
+            <span class="badge badge-success">Available</span>
+          </div>
+          <div class="content-item">
+            <div class="content-item-icon"><i data-lucide="target"></i></div>
+            <div>
+              <h4>Exclusive Deals</h4>
+              <p>Member-only promotions and special offers.</p>
+            </div>
+            <span class="badge badge-success">Available</span>
+          </div>
+          <div class="content-item">
+            <div class="content-item-icon"><i data-lucide="trending-up"></i></div>
+            <div>
+              <h4>Analytics & Insights</h4>
+              <p>Detailed data and platform analytics.</p>
+            </div>
+            <span class="badge badge-success">Available</span>
+          </div>
+          <div class="content-item">
+            <div class="content-item-icon"><i data-lucide="briefcase-business"></i></div>
+            <div>
+              <h4>Priority Support</h4>
+              <p>Expedited chat support with dedicated response times.</p>
+            </div>
+            <span class="badge badge-primary">Premium</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="dashboard-sidebar">
+
+        <!-- Your code card -->
+        <div class="card code-card">
+          <h3 class="card-title mb-12">Your Subscriber Code</h3>
+          <div class="code-display copyable" id="dashCodeCopy" title="Click to copy">—</div>
+          <p class="code-hint">Keep this safe — use it to sign in from any device.</p>
+          <button class="btn btn-secondary btn-block btn-sm mt-12" id="copyCodeBtn"><i data-lucide="copy"></i> Copy Code</button>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="card quick-actions">
+          <h3 class="card-title mb-12">Quick Actions</h3>
+          <button class="quick-action-btn" id="chatFabCard">
+            <span><i data-lucide="message-circle"></i></span> Chat with Admin
+            <span class="qa-badge hidden" id="qaUnreadBadge">0</span>
+          </button>
+          <button class="quick-action-btn" onclick="window.location='welcome.html'">
+            <span><i data-lucide="house"></i></span> Back to Welcome
+          </button>
+          <button class="quick-action-btn danger" id="logoutBtn2">
+            <span><i data-lucide="log-out"></i></span> Sign Out
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ===================== CHAT WIDGET ===================== -->
+  <button class="chat-fab" id="chatFab" aria-label="Open chat">
+    <i data-lucide="message-circle"></i>
+    <span class="chat-fab-badge hidden" id="chatFabBadge">0</span>
+  </button>
+
+  <div class="modal-overlay" id="chatModal" role="dialog" aria-modal="true">
+    <div class="chat-window">
+      <div class="chat-header">
+        <div class="chat-avatar"><i data-lucide="message-circle"></i></div>
+        <div class="chat-header-info">
+          <h3>Support Chat</h3>
+          <span class="chat-online"><span class="status-dot"></span> Online</span>
+        </div>
+        <button class="chat-close" id="closeChatBtn" aria-label="Close chat"><i data-lucide="x"></i></button>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-area">
+        <input class="chat-file-input" id="chatFileInput" type="file" accept="image/*" />
+        <button class="chat-attach-btn" id="chatAttachBtn" type="button" aria-label="Send photo"><i data-lucide="image-plus"></i></button>
+        <textarea class="chat-input" id="chatInput" placeholder="Type a message…" rows="1" maxlength="1000"></textarea>
+        <button class="chat-send-btn" id="chatSendBtn" aria-label="Send"><i data-lucide="send"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
+
+

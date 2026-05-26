@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LadySwap - Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" type="image/png" href="favicons/favicon-32x32.png" sizes="32x32">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+</head>
+<body>
+  <div class="main-bg"><img src="images/bg-bottom.webp" alt="Background"></div>
+  <div class="main-bg-overlay"></div>
+  <!-- ==================== LOGIN SCREEN ==================== -->
+  <div id="loginScreen" class="admin-login-page">
+    <div class="card login-card">
+      <div class="login-header">
+        <div class="login-logo"><img src="images/lips-logo.png" alt="Lady Swap Logo" class="logo-img" style="width:68px;height:68px;border-radius:20px;"></div>
+        <h1>Admin Panel</h1>
+        <p>Sign in to manage LadySwap</p>
+      </div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input class="form-input" type="text" id="loginUsername" placeholder="admin" autocomplete="username" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required />
+        </div>
+        <div id="loginAlert" class="hidden"></div>
+        <button class="btn btn-primary btn-block btn-lg" type="submit" id="loginBtn">
+          <span id="loginBtnText">Sign In</span>
+          <span class="spinner hidden" id="loginSpinner"></span>
+        </button>
+      </form>
+      <p class="login-hint">Default credentials: <code>admin</code> / <code>admin123</code></p>
+    </div>
+  </div>
+
+  <!-- ==================== ADMIN DASHBOARD ==================== -->
+  <div id="adminApp" class="admin-layout hidden">
+
+    <!-- Sidebar overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="admin-logo">
+        <div class="sidebar-logo-icon"><img src="images/lips-logo.png" alt="Lady Swap Logo" class="logo-img" style="width:38px;height:38px;border-radius:11px;"></div>
+        <div>
+          <h2>LadySwap</h2>
+          <p>Admin Panel</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-section="dashboard">
+          <span class="nav-icon"><i data-lucide="layout-dashboard"></i></span> Dashboard
+        </button>
+        <button class="nav-item" data-section="conversations">
+          <span class="nav-icon"><i data-lucide="messages-square"></i></span> Conversations
+          <span class="nav-badge" id="convBadge">0</span>
+        </button>
+        <button class="nav-item" data-section="subscribers">
+          <span class="nav-icon"><i data-lucide="users"></i></span> Subscribers
+        </button>
+        <button class="nav-item" data-section="visitors">
+          <span class="nav-icon"><i data-lucide="eye"></i></span> Visitors
+        </button>
+        <button class="nav-item" data-section="logs">
+          <span class="nav-icon"><i data-lucide="clipboard-list"></i></span> Activity Logs
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="nav-item" id="adminLogoutBtn">
+          <span class="nav-icon"><i data-lucide="log-out"></i></span> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="admin-main">
+
+      <!-- Mobile header -->
+      <div class="admin-mobile-header">
+        <button class="hamburger" id="hamburgerBtn"><i data-lucide="menu"></i></button>
+        <span class="admin-mobile-title">Admin Panel</span>
+      </div>
+
+      <!-- === DASHBOARD SECTION === -->
+      <section class="admin-section active" id="section-dashboard">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Dashboard</h2>
+            <p class="section-subtitle">Platform overview</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="refreshStatsBtn"><i data-lucide="refresh-cw"></i> Refresh</button>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+          <div class="card stats-card">
+            <p class="stats-label">Total Visitors</p>
+            <p class="stats-number" id="statVisitors">—</p>
+          </div>
+          <div class="card stats-card">
+            <p class="stats-label">Subscribers</p>
+            <p class="stats-number text-success" id="statSubscribers">—</p>
+          </div>
+          <div class="card stats-card">
+            <p class="stats-label">Active Subscribers</p>
+            <p class="stats-number text-gradient" id="statActive">—</p>
+          </div>
+          <div class="card stats-card">
+            <p class="stats-label">Open Conversations</p>
+            <p class="stats-number" id="statConvOpen">—</p>
+          </div>
+          <div class="card stats-card">
+            <p class="stats-label">Unread Chats</p>
+            <p class="stats-number text-warning" id="statUnread">—</p>
+          </div>
+          <div class="card stats-card">
+            <p class="stats-label">Banned Visitors</p>
+            <p class="stats-number text-error" id="statBanned">—</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon purple"><i data-lucide="radio"></i></div>
+            <div>
+              <h3 class="card-title">Live Status</h3>
+              <p class="card-description">Auto-refreshes every 15 seconds</p>
+            </div>
+            <span class="badge badge-success ml-auto" id="liveIndicator">● Live</span>
+          </div>
+          <p class="text-secondary text-sm">Last updated: <span id="lastUpdated">—</span></p>
+        </div>
+      </section>
+
+      <!-- === CONVERSATIONS SECTION === -->
+      <section class="admin-section" id="section-conversations">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Conversations</h2>
+            <p class="section-subtitle">User support chats</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="refreshConvBtn"><i data-lucide="refresh-cw"></i> Refresh</button>
+        </div>
+
+        <div class="admin-chat-view">
+          <!-- Conversation list -->
+          <div class="admin-chat-sidebar" id="convList">
+            <div class="empty-state" id="convEmpty">
+              <div class="empty-icon"><i data-lucide="messages-square"></i></div>
+              <p>No conversations yet</p>
+            </div>
+          </div>
+
+          <!-- Chat detail -->
+          <div class="admin-chat-main" id="chatMain">
+            <div class="admin-chat-placeholder" id="chatPlaceholder">
+              <div class="placeholder-icon"><i data-lucide="messages-square"></i></div>
+              <p>Select a conversation to reply</p>
+            </div>
+            <div class="admin-chat-content hidden" id="chatContent">
+              <div class="admin-chat-header" id="chatDetailHeader">
+                <!-- filled by JS -->
+              </div>
+              <div class="admin-messages" id="adminMessages"></div>
+              <div class="admin-chat-input-area">
+                <textarea class="admin-chat-input" id="adminChatInput" placeholder="Type your reply…" rows="1" maxlength="2000"></textarea>
+                <button class="btn btn-primary" id="adminSendBtn">Send <i data-lucide="send"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- === SUBSCRIBERS SECTION === -->
+      <section class="admin-section" id="section-subscribers">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Subscribers</h2>
+            <p class="section-subtitle">Manage subscriber records</p>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-primary btn-sm" id="addSubscriberBtn" title="Add Subscriber"><i data-lucide="plus"></i></button>
+            <button class="btn btn-secondary btn-sm" id="refreshSubsBtn"><i data-lucide="refresh-cw"></i> Refresh</button>
+          </div>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table" id="subscribersTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Code</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Expires</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="subscribersTbody">
+              <tr><td colspan="8" class="table-loading">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Add Subscriber Modal -->
+      <div class="modal hidden" id="addSubscriberModal">
+        <div class="modal-content">
+          <button class="modal-close" id="closeAddSubscriberModal" title="Close">&times;</button>
+          <h3>Add New Subscriber</h3>
+          <form id="addSubscriberForm">
+            <div class="form-group">
+              <label>Name</label>
+              <input type="text" id="subscriberName" class="form-input" placeholder="Subscriber Name" required />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="subscriberEmail" class="form-input" placeholder="Email (optional)" />
+            </div>
+            <button class="btn btn-primary btn-block" type="submit" id="createSubscriberBtn">Create</button>
+            <div id="addSubscriberAlert" class="alert hidden" style="margin-top:10px"></div>
+          </form>
+          <div id="subscriberCodeResult" class="hidden" style="margin-top:18px;text-align:center">
+            <p>Subscriber code:</p>
+            <div style="display:flex;justify-content:center;align-items:center;gap:8px">
+              <span id="generatedSubscriberCode" class="mono" style="font-size:1.2em;color:var(--primary)"></span>
+              <button class="btn btn-sm btn-secondary" id="copySubscriberCodeBtn">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- === VISITORS SECTION === -->
+      <section class="admin-section" id="section-visitors">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Visitors</h2>
+            <p class="section-subtitle">IP-tracked site visitors</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="refreshVisitorsBtn"><i data-lucide="refresh-cw"></i> Refresh</button>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table" id="visitorsTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>IP Address</th>
+                <th>Visits</th>
+                <th>First Seen</th>
+                <th>Last Seen</th>
+                <th>Subscriber</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="visitorsTbody">
+              <tr><td colspan="8" class="table-loading">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- === LOGS SECTION === -->
+      <section class="admin-section" id="section-logs">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Activity Logs</h2>
+            <p class="section-subtitle">Last 200 actions</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="refreshLogsBtn"><i data-lucide="refresh-cw"></i> Refresh</button>
+        </div>
+
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Action</th>
+                <th>Timestamp</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody id="logsTbody">
+              <tr><td colspan="4" class="table-loading">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div><!-- /adminApp -->
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
+
