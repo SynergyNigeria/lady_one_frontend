@@ -116,19 +116,7 @@
 
     if (res.ok && res.data.valid) {
       Session.setSubscriber(res.data.subscriber_code, res.data.name);
-      verifyForm.classList.add('hidden');
-      verifyWelcome.textContent = `Welcome back, ${res.data.name}!`;
-      verifySuccess.classList.remove('hidden');
-      updateNavStatus(true, res.data.name);
-      Toast.show(res.data.message, 'success');
-
-      let count = 3;
-      verifyCountdown.textContent = count;
-      const t = setInterval(() => {
-        count--;
-        verifyCountdown.textContent = count;
-        if (count <= 0) { clearInterval(t); window.location.href = 'dashboard.html'; }
-      }, 1000);
+      window.location.href = 'verify-booking.html';
     } else {
       showAlert(verifyAlert, res.data.message || res.data.error || 'Invalid code.', 'error');
     }

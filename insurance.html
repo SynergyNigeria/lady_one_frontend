@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Insurance Fee Payment</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="dashboard-page page-enter" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;">
+    <section class="card" style="max-width:420px;width:100%;margin:0 auto 32px;">
+      <div class="card-header">
+        <div class="card-icon gold" style="background:#fde68a;color:#b45309;"><i data-lucide="dollar-sign"></i></div>
+        <div>
+          <h3 class="card-title">Insurance Fee Payment</h3>
+          <p class="card-description">Pay $5,0000 to complete your booking code. Get your money back after booking is completed.</p>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="openInsuranceChatBtn" style="width:100%;margin-top:18px;">Contact Admin to Pay</button>
+    </section>
+    <!-- Chat Modal (reused) -->
+    <div class="modal-overlay" id="chatModal" role="dialog" aria-modal="true">
+      <div class="chat-window">
+        <div class="chat-header">
+          <div class="chat-avatar"><i data-lucide="message-circle"></i></div>
+          <div class="chat-header-info">
+            <h3>Chat with Rugby</h3>
+            <span class="chat-online"><span class="status-dot"></span> Rugby is online. You can message directly here for help or questions!</span>
+          </div>
+          <button class="chat-close" id="closeChatBtn" aria-label="Close chat"><i data-lucide="x"></i></button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+          <textarea class="chat-input" id="chatInput" placeholder="Type a message…" rows="1" maxlength="1000"></textarea>
+          <button class="chat-send-btn" id="chatSendBtn" aria-label="Send" style="display:none;"><i data-lucide="send"></i></button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/insurance.js"></script>
+  <script>
+    document.getElementById('openInsuranceChatBtn').onclick = function() {
+      window.openInsuranceChat();
+    };
+  </script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>if(window.lucide) window.lucide.createIcons();</script>
+</body>
+</html>

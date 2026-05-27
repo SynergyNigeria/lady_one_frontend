@@ -17,15 +17,8 @@
     return;
   }
 
-  // ---- DOM refs ----
-  const greetingName     = document.getElementById('greetingName');
-  const subscriberName   = document.getElementById('subscriberName');
-  const subscriberBadge  = document.getElementById('subscriberCodeBadge');
-  const dashCode         = document.getElementById('dashCode');
-  const dashCodeCopy     = document.getElementById('dashCodeCopy');
-  const memberSince      = document.getElementById('memberSince');
-  const expiresAt        = document.getElementById('expiresAt');
-  const copyCodeBtn      = document.getElementById('copyCodeBtn');
+
+  // ---- DOM refs (guarded) ----
   const chatFab          = document.getElementById('chatFab');
   const chatFabBadge     = document.getElementById('chatFabBadge');
   const chatModal        = document.getElementById('chatModal');
@@ -35,14 +28,37 @@
   const chatAttachBtn    = document.getElementById('chatAttachBtn');
   const chatFileInput    = document.getElementById('chatFileInput');
   const chatMessages     = document.getElementById('chatMessages');
-  const qaUnreadBadge    = document.getElementById('qaUnreadBadge');
 
-  // Logout buttons
-  document.getElementById('logoutBtn').addEventListener('click', logout);
-  document.getElementById('logoutBtn2').addEventListener('click', logout);
-  document.getElementById('chatFabCard').addEventListener('click', () => openChat());
+  if (chatFab) chatFab.addEventListener('click', () => openChat());
+  if (closeChatBtn) closeChatBtn.addEventListener('click', () => closeChat());
+  if (chatModal) chatModal.addEventListener('click', (e) => { if (e.target === chatModal) closeChat(); });
+  if (chatSendBtn) chatSendBtn.addEventListener('click', sendMessage);
+  if (chatAttachBtn && chatFileInput) chatAttachBtn.addEventListener('click', () => chatFileInput.click());
+  if (chatFileInput) chatFileInput.addEventListener('change', sendPhoto);
+  if (chatInput) {
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    chatInput.addEventListener('input', () => {
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
+    });
+  }
+
+  // Guard all usages in chat logic
+  function safeAppendMessage(msg) {
+    if (chatMessages) appendMessage(msg);
+  }
+  function safeScrollBottom() {
+    if (chatMessages) scrollBottom();
+  }
+
+  // Patch chat logic to use safe wrappers
+  // Replace all appendMessage(...) with safeAppendMessage(...)
+  // Replace all scrollBottom() with safeScrollBottom()
 
   // ---- Verify subscription & load info ----
+
   (async () => {
     const res = await API.post('/verify-code/', { code });
     if (!res.ok || !res.data.valid) {
@@ -54,31 +70,34 @@
     const d = res.data;
     Session.setSubscriber(d.subscriber_code, d.name);
 
-    greetingName.textContent      = d.name;
-    subscriberName.textContent    = d.name;
-    subscriberBadge.textContent   = d.subscriber_code;
-    dashCode.textContent          = d.subscriber_code;
-    dashCodeCopy.textContent      = d.subscriber_code;
-    memberSince.textContent       = fmtDate(null); // not returned; set placeholder
-    expiresAt.textContent         = d.expires_at ? fmtDate(d.expires_at) : 'Never';
+    // Only set textContent if element exists
+    if (typeof greetingName !== 'undefined' && greetingName) greetingName.textContent = d.name;
+    if (typeof subscriberName !== 'undefined' && subscriberName) subscriberName.textContent = d.name;
+    if (typeof subscriberBadge !== 'undefined' && subscriberBadge) subscriberBadge.textContent = d.subscriber_code;
+    if (typeof dashCode !== 'undefined' && dashCode) dashCode.textContent = d.subscriber_code;
+    if (typeof dashCodeCopy !== 'undefined' && dashCodeCopy) dashCodeCopy.textContent = d.subscriber_code;
+    if (typeof memberSince !== 'undefined' && memberSince) memberSince.textContent = fmtDate(null);
+    if (typeof expiresAt !== 'undefined' && expiresAt) expiresAt.textContent = d.expires_at ? fmtDate(d.expires_at) : 'Never';
 
     // Track visit
     API.post('/track/', { page: '/dashboard' });
   })();
 
   // ---- Copy code ----
-  copyCodeBtn.addEventListener('click', () => copyCode());
-  dashCodeCopy.addEventListener('click', () => copyCode());
+  // Only add event listeners if elements exist
+  if (typeof copyCodeBtn !== 'undefined' && copyCodeBtn) copyCodeBtn.addEventListener('click', () => copyCode());
+  if (typeof dashCodeCopy !== 'undefined' && dashCodeCopy) dashCodeCopy.addEventListener('click', () => copyCode());
   function copyCode() {
     navigator.clipboard.writeText(code).then(() => Toast.show('Code copied!', 'success', 2500));
   }
 
+
   // ---- Chat ----
+  let chatOpen = false;
   let sessionId = Session.getOrCreateId();
   let conversationId = null;
   let lastMsgId = 0;
   let pollTimer = null;
-  let chatOpen = false;
   let unreadCount = 0;
   const subscribeTrigger = 'i am ready to subscribe';
 
@@ -237,10 +256,14 @@
   }
 
   function updateBadge(n) {
-    chatFabBadge.textContent = n;
-    chatFabBadge.classList.toggle('hidden', n === 0);
-    qaUnreadBadge.textContent = n;
-    qaUnreadBadge.classList.toggle('hidden', n === 0);
+    if (chatFabBadge) {
+      chatFabBadge.textContent = n;
+      chatFabBadge.classList.toggle('hidden', n === 0);
+    }
+    if (typeof qaUnreadBadge !== 'undefined' && qaUnreadBadge) {
+      qaUnreadBadge.textContent = n;
+      qaUnreadBadge.classList.toggle('hidden', n === 0);
+    }
   }
 
   function scrollBottom() {
