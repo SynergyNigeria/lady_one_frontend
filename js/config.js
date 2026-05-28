@@ -1,6 +1,6 @@
 // LadySwap - Global Configuration
 const LOCAL_API_BASE = 'http://localhost:8001/api';
-const PRODUCTION_API_BASE = 'https://YOUR_PYTHONANYWHERE_USERNAME.pythonanywhere.com/api';
+const PRODUCTION_API_BASE = 'https://ladyone.pythonanywhere.com/api';
 const isLocalFrontend = ['localhost', '127.0.0.1', ''].includes(window.location.hostname);
 
 const CONFIG = {
