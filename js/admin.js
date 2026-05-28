@@ -54,7 +54,12 @@
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
 
-    const res = await API.post('/admin-api/login/', { username, password });
+    let res;
+    try {
+      res = await API.post('/admin-api/login/', { username, password });
+    } catch (err) {
+      res = { ok: false, data: { error: 'Network error. Please try again.' } };
+    }
 
     btn.disabled = false;
     btnTxt.textContent = 'Sign In';
@@ -67,8 +72,9 @@
       showAdmin();
     } else {
       alert.className = 'alert alert-error';
-      alert.textContent = res.data.error || 'Login failed.';
+      alert.textContent = (res.data && (res.data.error || res.data.detail)) ? (res.data.error || res.data.detail) : 'Login failed.';
       alert.classList.remove('hidden');
+      Toast.show(alert.textContent, 'error');
     }
   });
 
@@ -332,15 +338,15 @@
         <td>${escHtml(s.email)}</td>
         <td><span class="mono" style="color:var(--primary)">${s.subscriber_code}</span></td>
         <td>${s.verified_by_admin && !s.is_expired
-          ? '<span class="badge badge-success">Active</span>'
+          ? '<span class="badge badge-success">Verified</span>'
           : s.is_expired
           ? '<span class="badge badge-warning">Expired</span>'
-          : '<span class="badge badge-error">Inactive</span>'}</td>
+          : '<span class="badge badge-error">Unverified</span>'}</td>
         <td>${fmtDate(s.created_at)}</td>
         <td>${s.expires_at ? fmtDate(s.expires_at) : 'Never'}</td>
         <td>
           <button class="btn btn-sm ${s.verified_by_admin ? 'btn-danger' : 'btn-success'}" data-id="${s.id}" data-verified="${s.verified_by_admin}">
-            ${s.verified_by_admin ? 'Deactivate' : 'Activate'}
+            ${s.verified_by_admin ? 'Unverify Code' : 'Verify Code'}
           </button>
           <button class="btn btn-sm btn-secondary regen-btn" data-id="${s.id}" style="margin-left:4px"><i data-lucide="refresh-cw"></i> Code</button>
         </td>`;
@@ -352,7 +358,7 @@
         const id     = btn.dataset.id;
         const verified = btn.dataset.verified === 'true';
         const res = await API.patch(`/admin-api/subscribers/${id}/`, { verified_by_admin: !verified }, adminToken);
-        if (res.ok) { Toast.show('Subscriber updated.', 'success'); loadSubscribers(); }
+        if (res.ok) { Toast.show('Booking code verification updated.', 'success'); loadSubscribers(); }
         else Toast.show(res.data.error || 'Failed.', 'error');
       });
     });
@@ -365,6 +371,59 @@
         else Toast.show('Failed to regenerate.', 'error');
       });
     });
+    renderIcons();
+  }
+
+  document.getElementById('refreshSubsBtn').addEventListener('click', loadSubscribers);
+
+  // ---- VISITORS ----
+  async function loadVisitors() {
+    const res = await API.get('/admin-api/visitors/', adminToken);
+    if (!res.ok) return;
+
+    const tbody = document.getElementById('visitorsTbody');
+    tbody.innerHTML = '';
+
+    if (!res.data.length) {
+      tbody.innerHTML = '<tr><td colspan="8" class="table-loading">No visitors yet.</td></tr>';
+      return;
+    }
+
+    res.data.forEach((v, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${i + 1}</td>
+        <td><span class="mono">${v.ip_address}</span></td>
+        <td>${v.visit_count}</td>
+        <td>${fmtDate(v.first_seen)}</td>
+        <td>${fmtDate(v.last_seen)}</td>
+        <td>${v.has_subscriber ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-secondary">No</span>'}</td>
+        <td>${v.is_banned
+          ? '<span class="badge badge-error">Banned</span>'
+          : '<span class="badge badge-success">OK</span>'}</td>
+        <td>
+          <button class="btn btn-sm ${v.is_banned ? 'btn-success' : 'btn-danger'} ban-btn"
+            data-id="${v.id}" data-ban="${!v.is_banned}">
+            ${v.is_banned ? '<i data-lucide="check"></i> Unban' : '<i data-lucide="ban"></i> Ban'}
+          </button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+
+    tbody.querySelectorAll('.ban-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id  = btn.dataset.id;
+        const ban = btn.dataset.ban === 'true';
+        const res = await API.post('/admin-api/ban/', { visitor_id: id, ban }, adminToken);
+        if (res.ok) {
+          Toast.show(`${res.data.ip} has been ${res.data.is_banned ? 'banned' : 'unbanned'}.`, 'success');
+          loadVisitors();
+        } else Toast.show('Action failed.', 'error');
+      });
+    });
+    renderIcons();
+  }
+
   document.getElementById('refreshVisitorsBtn').addEventListener('click', loadVisitors);
 
   // ---- LOGS ----
@@ -469,7 +528,5 @@
       }
     });
   }
-
-}
 })();
 

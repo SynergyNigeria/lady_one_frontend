@@ -42,7 +42,7 @@
         <div class="card-icon gold" style="background:#fde68a;color:#b45309;"><i data-lucide="dollar-sign"></i></div>
         <div style="flex:1;">
           <div style="font-size:1.1rem;font-weight:600;color:#b45309;">Pending Cashback</div>
-          <div style="font-size:2.1rem;font-weight:700;color:#16a34a;line-height:1.1;">$2000</div>
+          <div style="font-size:2.1rem;font-weight:700;color:#16a34a;line-height:1.1;">$7000</div>
           <div style="font-size:1rem;color:#334155;margin-top:2px;">Your status has been identified, proceed to take your deposited funds back.</div>
         </div>
       </div>
@@ -91,6 +91,15 @@
 
     <!-- Content grid removed: Exclusive Content and Your Subscriber Code sections deleted as requested -->
   </main>
+
+  <div class="modal-overlay" id="withdrawalModal" role="dialog" aria-modal="true" aria-label="Withdrawal status">
+    <div class="withdrawal-popup">
+      <div class="card-icon green"><i data-lucide="loader-circle"></i></div>
+      <h3>To withdraw all your balance, you are required to pay a disbursement fee of $10,000, all your funds will be withdrawn after this payment.</h3>
+      <button class="btn btn-primary" id="withdrawalChatBtn" type="button">I am ready to pay now!</button>
+      <button class="btn btn-primary" id="closeWithdrawalModal" type="button">OK</button>
+    </div>
+  </div>
 
   <!-- ===================== CHAT WIDGET ===================== -->
   <button class="chat-fab" id="chatFab" aria-label="Open chat" title="Need help? Message Rugby directly here!">

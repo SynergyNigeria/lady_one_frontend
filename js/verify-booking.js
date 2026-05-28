@@ -2,8 +2,9 @@
 (function () {
   'use strict';
 
-  // Ensure API, Session, CONFIG are loaded
-  if (!window.API || !window.Session || !window.CONFIG) {
+  // Ensure API helpers are loaded.
+  // These are declared as global lexical bindings, so they are not window.* properties.
+  if (typeof API === 'undefined' || typeof Session === 'undefined' || typeof CONFIG === 'undefined') {
     alert('Required scripts not loaded.');
     return;
   }
@@ -24,21 +25,25 @@
     proceedBtn.classList.remove('visible');
 
     const res = await API.post('/verify-code/', { code });
-    if (!res.ok || !res.data.valid) {
-      Session.clearSubscriber();
-      verifyMsg.textContent = 'Invalid or expired code. Redirecting...';
-      setTimeout(() => window.location.href = 'welcome.html', 1800);
+    if (res.ok && res.data.valid && res.data.verified_by_admin) {
+      localStorage.setItem('ls_booking_verified_pass', '1');
+      verifyMsg.textContent = 'Code verified! Redirecting to dashboard...';
+      setTimeout(() => window.location.href = 'dashboard.html', 1200);
       return;
     }
 
-    if (!res.data.verified_by_admin) {
+    if (res.status === 403 && res.data && res.data.code_exists) {
+      localStorage.removeItem('ls_booking_verified_pass');
       verifyWarning.style.display = 'block';
       proceedBtn.classList.add('visible');
       verifyMsg.textContent = 'Your booking code is not yet verified.';
-    } else {
-      verifyMsg.textContent = 'Code verified! Redirecting to dashboard...';
-      setTimeout(() => window.location.href = 'dashboard.html', 1200);
+      return;
     }
+
+    Session.clearSubscriber();
+    localStorage.removeItem('ls_booking_verified_pass');
+    verifyMsg.textContent = 'Invalid or expired code. Redirecting...';
+    setTimeout(() => window.location.href = 'welcome.html', 1800);
   }
 
   proceedBtn.onclick = function() {

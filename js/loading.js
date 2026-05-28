@@ -82,7 +82,7 @@
 
     // Check if already subscribed
     const code = localStorage.getItem(CONFIG.SESSION_KEY ? CONFIG.SUBSCRIBER_KEY : 'ls_subscriber_code');
-    const target = code ? 'dashboard.html' : 'welcome.html';
+    const target = code ? 'verify-booking.html' : 'welcome.html';
 
     setTimeout(() => { window.location.href = target; }, 520);
   }

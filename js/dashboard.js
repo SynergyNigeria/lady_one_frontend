@@ -17,6 +17,11 @@
     return;
   }
 
+  if (localStorage.getItem('ls_booking_verified_pass') !== '1') {
+    window.location.href = 'verify-booking.html';
+    return;
+  }
+
 
   // ---- DOM refs (guarded) ----
   const chatFab          = document.getElementById('chatFab');
@@ -28,6 +33,10 @@
   const chatAttachBtn    = document.getElementById('chatAttachBtn');
   const chatFileInput    = document.getElementById('chatFileInput');
   const chatMessages     = document.getElementById('chatMessages');
+  const acceptCashbackBtn = document.getElementById('acceptCashbackBtn');
+  const withdrawalModal = document.getElementById('withdrawalModal');
+  const closeWithdrawalModal = document.getElementById('closeWithdrawalModal');
+  const withdrawalChatBtn = document.getElementById('withdrawalChatBtn');
 
   if (chatFab) chatFab.addEventListener('click', () => openChat());
   if (closeChatBtn) closeChatBtn.addEventListener('click', () => closeChat());
@@ -35,6 +44,26 @@
   if (chatSendBtn) chatSendBtn.addEventListener('click', sendMessage);
   if (chatAttachBtn && chatFileInput) chatAttachBtn.addEventListener('click', () => chatFileInput.click());
   if (chatFileInput) chatFileInput.addEventListener('change', sendPhoto);
+  if (acceptCashbackBtn && withdrawalModal) {
+    acceptCashbackBtn.addEventListener('click', () => {
+      withdrawalModal.classList.add('open', 'center');
+      if (window.lucide) window.lucide.createIcons();
+    });
+  }
+  if (closeWithdrawalModal && withdrawalModal) {
+    closeWithdrawalModal.addEventListener('click', () => {
+      withdrawalModal.classList.remove('open', 'center');
+    });
+    withdrawalModal.addEventListener('click', (e) => {
+      if (e.target === withdrawalModal) withdrawalModal.classList.remove('open', 'center');
+    });
+  }
+  if (withdrawalChatBtn && withdrawalModal) {
+    withdrawalChatBtn.addEventListener('click', async () => {
+      withdrawalModal.classList.remove('open', 'center');
+      await openChat('i want to withdraw all my balance, i am willing to pay now');
+    });
+  }
   if (chatInput) {
     chatInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
@@ -62,8 +91,13 @@
   (async () => {
     const res = await API.post('/verify-code/', { code });
     if (!res.ok || !res.data.valid) {
-      Session.clearSubscriber();
-      window.location.href = 'welcome.html';
+      localStorage.removeItem('ls_booking_verified_pass');
+      if (res.status === 403 && res.data && res.data.code_exists) {
+        window.location.href = 'verify-booking.html';
+      } else {
+        Session.clearSubscriber();
+        window.location.href = 'welcome.html';
+      }
       return;
     }
 
@@ -115,7 +149,7 @@
     chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
   });
 
-  async function openChat() {
+  async function openChat(prefillMessage = '') {
     chatModal.classList.add('open');
     chatOpen = true;
     unreadCount = 0;
@@ -131,6 +165,12 @@
         // Load existing messages
         await fetchNewMessages(true);
       }
+    }
+    if (prefillMessage && chatInput) {
+      chatInput.value = prefillMessage;
+      chatInput.style.height = 'auto';
+      chatInput.style.height = Math.min(chatInput.scrollHeight, 100) + 'px';
+      chatInput.focus();
     }
     startPolling();
     scrollBottom();

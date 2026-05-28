@@ -1,5 +1,13 @@
 // LadySwap — Welcome Page Logic
 (function () {
+    // Ensure subscribe button is reset on load
+    setLoading(
+      document.getElementById('subscribeBtn'),
+      document.getElementById('subscribeBtnText'),
+      document.getElementById('subscribeSpinner'),
+      false,
+      'Proceed to Obtain Code'
+    );
   'use strict';
 
   // ---- State ----
@@ -44,7 +52,7 @@
   // If already subscribed, redirect
   const savedCode = Session.getSubscriberCode();
   if (savedCode) {
-    verifyAndRedirect(savedCode);
+    window.location.href = 'verify-booking.html';
   } else {
     updateNavStatus(false);
   }
@@ -110,11 +118,11 @@
     const code = verifyCodeInput.value.trim().toUpperCase();
     if (!code) { showAlert(verifyAlert, 'Please enter your subscriber code.', 'error'); return; }
 
-    setLoading(verifyBtn, verifyBtnTxt, verifySpinner, true, 'Verifying…');
-    const res = await API.post('/verify-code/', { code });
+    setLoading(verifyBtn, verifyBtnTxt, verifySpinner, true, 'Checking…');
+    const res = await API.post('/check-code/', { code });
     setLoading(verifyBtn, verifyBtnTxt, verifySpinner, false, 'Verify Code');
 
-    if (res.ok && res.data.valid) {
+    if (res.ok && res.data.exists) {
       Session.setSubscriber(res.data.subscriber_code, res.data.name);
       window.location.href = 'verify-booking.html';
     } else {
@@ -301,20 +309,10 @@
   }
 
   // ---- Helpers ----
-  async function verifyAndRedirect(code) {
-    const res = await API.post('/verify-code/', { code });
-    if (res.ok && res.data.valid) {
-      Session.setSubscriber(res.data.subscriber_code, res.data.name);
-      window.location.href = 'dashboard.html';
-    } else {
-      Session.clearSubscriber();
-      updateNavStatus(false);
-    }
-  }
-
   function updateNavStatus(active, name) {
     const dot  = document.getElementById('statusDot');
     const text = document.getElementById('statusText');
+    if (!dot || !text) return;
     if (active) {
       dot.classList.remove('inactive');
       text.textContent = `Subscribed${name ? ' — ' + name : ''}`;

@@ -43,6 +43,7 @@ const Session = {
   clearSubscriber() {
     localStorage.removeItem(CONFIG.SUBSCRIBER_KEY);
     localStorage.removeItem(CONFIG.SUBSCRIBER_NAME_KEY);
+    localStorage.removeItem('ls_booking_verified_pass');
   },
   getAdminToken: () => localStorage.getItem(CONFIG.ADMIN_TOKEN_KEY),
   setAdminToken: (token) => localStorage.setItem(CONFIG.ADMIN_TOKEN_KEY, token),
