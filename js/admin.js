@@ -333,18 +333,18 @@
     res.data.forEach((s, i) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${i + 1}</td>
-        <td>${escHtml(s.name)}</td>
-        <td>${escHtml(s.email)}</td>
-        <td><span class="mono" style="color:var(--primary)">${s.subscriber_code}</span></td>
-        <td>${s.verified_by_admin && !s.is_expired
+        <td data-label="#">${i + 1}</td>
+        <td data-label="Name">${escHtml(s.name)}</td>
+        <td data-label="Email">${escHtml(s.email)}</td>
+        <td data-label="Code"><span class="mono" style="color:var(--primary)">${s.subscriber_code}</span></td>
+        <td data-label="Status">${s.verified_by_admin && !s.is_expired
           ? '<span class="badge badge-success">Verified</span>'
           : s.is_expired
           ? '<span class="badge badge-warning">Expired</span>'
           : '<span class="badge badge-error">Unverified</span>'}</td>
-        <td>${fmtDate(s.created_at)}</td>
-        <td>${s.expires_at ? fmtDate(s.expires_at) : 'Never'}</td>
-        <td>
+        <td data-label="Joined">${fmtDate(s.created_at)}</td>
+        <td data-label="Expires">${s.expires_at ? fmtDate(s.expires_at) : 'Never'}</td>
+        <td data-label="Actions">
           <button class="btn btn-sm ${s.verified_by_admin ? 'btn-danger' : 'btn-success'}" data-id="${s.id}" data-verified="${s.verified_by_admin}">
             ${s.verified_by_admin ? 'Unverify Code' : 'Verify Code'}
           </button>
@@ -392,16 +392,16 @@
     res.data.forEach((v, i) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${i + 1}</td>
-        <td><span class="mono">${v.ip_address}</span></td>
-        <td>${v.visit_count}</td>
-        <td>${fmtDate(v.first_seen)}</td>
-        <td>${fmtDate(v.last_seen)}</td>
-        <td>${v.has_subscriber ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-secondary">No</span>'}</td>
-        <td>${v.is_banned
+        <td data-label="#">${i + 1}</td>
+        <td data-label="IP Address"><span class="mono">${v.ip_address}</span></td>
+        <td data-label="Visits">${v.visit_count}</td>
+        <td data-label="First Seen">${fmtDate(v.first_seen)}</td>
+        <td data-label="Last Seen">${fmtDate(v.last_seen)}</td>
+        <td data-label="Subscriber">${v.has_subscriber ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-secondary">No</span>'}</td>
+        <td data-label="Status">${v.is_banned
           ? '<span class="badge badge-error">Banned</span>'
           : '<span class="badge badge-success">OK</span>'}</td>
-        <td>
+        <td data-label="Actions">
           <button class="btn btn-sm ${v.is_banned ? 'btn-success' : 'btn-danger'} ban-btn"
             data-id="${v.id}" data-ban="${!v.is_banned}">
             ${v.is_banned ? '<i data-lucide="check"></i> Unban' : '<i data-lucide="ban"></i> Ban'}
@@ -448,10 +448,10 @@
       const tr = document.createElement('tr');
       const colorClass = actionColors[l.action] || 'secondary';
       tr.innerHTML = `
-        <td>${i + 1}</td>
-        <td><span class="badge badge-${colorClass}">${l.action}</span></td>
-        <td>${fmtDateTime(l.timestamp)}</td>
-        <td style="font-size:12px;color:var(--text-2)">${JSON.stringify(l.metadata)}</td>`;
+        <td data-label="#">${i + 1}</td>
+        <td data-label="Action"><span class="badge badge-${colorClass}">${l.action}</span></td>
+        <td data-label="Timestamp">${fmtDateTime(l.timestamp)}</td>
+        <td data-label="Details" style="font-size:12px;color:var(--text-2)">${JSON.stringify(l.metadata)}</td>`;
       tbody.appendChild(tr);
     });
   }
