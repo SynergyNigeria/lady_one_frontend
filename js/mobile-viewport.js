@@ -12,7 +12,7 @@
     root.style.setProperty('--app-viewport-height', `${height}px`);
     root.style.setProperty('--keyboard-inset', `${keyboardInset}px`);
     document.body.classList.toggle('keyboard-open', keyboardInset > keyboardThreshold);
-    pinActiveChatToLatest();
+    pinActiveChatToLatest({ keepComposerVisible: false });
   }
 
   function getChatParts(input) {
@@ -21,28 +21,30 @@
     return { chat, messages };
   }
 
-  function pinChatToLatest(input) {
+  function pinChatToLatest(input, options = {}) {
     if (!input || !input.matches('.chat-input, .admin-chat-input')) return;
+    const keepComposerVisible = options.keepComposerVisible !== false;
+    const isAdminInput = input.matches('.admin-chat-input');
     const { messages } = getChatParts(input);
 
     clearTimeout(pinTimer);
     pinTimer = setTimeout(() => {
       if (messages) {
         messages.scrollTop = messages.scrollHeight;
-        const lastMessage = messages.lastElementChild;
-        if (lastMessage) lastMessage.scrollIntoView({ block: 'end', inline: 'nearest' });
       }
 
-      input.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      if (keepComposerVisible && !isAdminInput) {
+        input.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
     }, 80);
   }
 
-  function pinActiveChatToLatest() {
-    pinChatToLatest(document.activeElement);
+  function pinActiveChatToLatest(options) {
+    pinChatToLatest(document.activeElement, options);
   }
 
   function keepChatComposerVisible(event) {
-    pinChatToLatest(event.target);
+    pinChatToLatest(event.target, { keepComposerVisible: event.type === 'focusin' });
   }
 
   setViewportVars();
