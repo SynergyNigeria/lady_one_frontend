@@ -159,15 +159,20 @@
     const list = document.getElementById('convList');
     const empty = document.getElementById('convEmpty');
     const convs = res.data;
+    if (!list) return;
 
     if (!convs.length) {
       list.innerHTML = '';
-      list.appendChild(empty);
-      empty.classList.remove('hidden');
+      if (empty) {
+        list.appendChild(empty);
+        empty.classList.remove('hidden');
+      } else {
+        list.innerHTML = '<div class="empty-state"><p>No conversations yet</p></div>';
+      }
       return;
     }
 
-    empty.classList.add('hidden');
+    if (empty) empty.classList.add('hidden');
     list.innerHTML = '';
 
     convs.forEach(c => {
