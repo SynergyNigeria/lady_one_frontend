@@ -247,6 +247,7 @@
     const msgContainer = document.getElementById('adminMessages');
     msgContainer.innerHTML = '';
     messages.forEach(m => appendAdminMessage(m));
+    convMsgLastId = messages.reduce((latest, m) => Math.max(latest, m.id || 0), 0);
     msgContainer.scrollTop = msgContainer.scrollHeight;
     renderIcons();
 
@@ -270,6 +271,7 @@
     const res = await API.post(`/admin-api/conversations/${id}/reply/`, { content: text }, adminToken);
     if (res.ok) {
       appendAdminMessage(res.data);
+      if (res.data.id) convMsgLastId = Math.max(convMsgLastId, res.data.id);
       document.getElementById('adminMessages').scrollTop = 9999;
     } else {
       Toast.show(res.data.error || 'Failed to send reply.', 'error');
@@ -278,8 +280,11 @@
 
   function appendAdminMessage(msg) {
     const container = document.getElementById('adminMessages');
+    if (msg.id && container.querySelector(`[data-message-id="${msg.id}"]`)) return;
+
     const div = document.createElement('div');
     div.className = `message ${msg.is_from_admin ? 'user' : 'admin'}`;
+    if (msg.id) div.dataset.messageId = msg.id;
     const photo = msg.attachment_url
       ? `<a href="${escAttr(msg.attachment_url)}" target="_blank" rel="noopener"><img class="chat-photo" src="${escAttr(msg.attachment_url)}" alt="Uploaded photo"></a>`
       : '';
@@ -300,7 +305,6 @@
 
   let convMsgLastId = 0;
   function startConvPoll(id) {
-    convMsgLastId = 0;
     convPollTimer = setInterval(async () => {
       const res = await API.get(`/admin-api/conversations/${id}/messages/`, adminToken);
       if (!res.ok) return;

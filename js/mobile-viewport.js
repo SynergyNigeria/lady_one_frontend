@@ -1,6 +1,7 @@
 (function () {
   const root = document.documentElement;
   const keyboardThreshold = 80;
+  let pinTimer = null;
 
   function setViewportVars() {
     const viewport = window.visualViewport;
@@ -11,25 +12,44 @@
     root.style.setProperty('--app-viewport-height', `${height}px`);
     root.style.setProperty('--keyboard-inset', `${keyboardInset}px`);
     document.body.classList.toggle('keyboard-open', keyboardInset > keyboardThreshold);
+    pinActiveChatToLatest();
+  }
+
+  function getChatParts(input) {
+    const chat = input && input.closest('.chat-window, .admin-chat-main');
+    const messages = chat && chat.querySelector('.chat-messages, .admin-messages');
+    return { chat, messages };
+  }
+
+  function pinChatToLatest(input) {
+    if (!input || !input.matches('.chat-input, .admin-chat-input')) return;
+    const { messages } = getChatParts(input);
+
+    clearTimeout(pinTimer);
+    pinTimer = setTimeout(() => {
+      if (messages) {
+        messages.scrollTop = messages.scrollHeight;
+        const lastMessage = messages.lastElementChild;
+        if (lastMessage) lastMessage.scrollIntoView({ block: 'end', inline: 'nearest' });
+      }
+
+      input.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }, 80);
+  }
+
+  function pinActiveChatToLatest() {
+    pinChatToLatest(document.activeElement);
   }
 
   function keepChatComposerVisible(event) {
-    const target = event.target;
-    if (!target || !target.matches('.chat-input, .admin-chat-input')) return;
-
-    setTimeout(() => {
-      target.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-
-      const chat = target.closest('.chat-window, .admin-chat-main');
-      const messages = chat && chat.querySelector('.chat-messages, .admin-messages');
-      if (messages) messages.scrollTop = messages.scrollHeight;
-    }, 120);
+    pinChatToLatest(event.target);
   }
 
   setViewportVars();
   window.addEventListener('resize', setViewportVars, { passive: true });
   window.addEventListener('orientationchange', () => setTimeout(setViewportVars, 250), { passive: true });
   document.addEventListener('focusin', keepChatComposerVisible);
+  document.addEventListener('input', keepChatComposerVisible);
   document.addEventListener('focusout', () => setTimeout(setViewportVars, 120));
 
   if (window.visualViewport) {
